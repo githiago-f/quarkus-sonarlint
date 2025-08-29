@@ -2,46 +2,49 @@ package br.edu.ifrs.modelo;
 
 import java.util.Date;
 
-public class Cliente {
-  public String nome;
-  public String email;
-  public int idade;
-  private String codigoInterno;
-  private Date cadastro;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-  public Cliente(String n, String e, int i) {
-    this.nome = n;
-    this.email = e;
-    this.idade = i;
+public class Cliente {
+  private static Logger logger = LoggerFactory.getLogger(Cliente.class);
+
+  private final String nome;
+  private final String email;
+  private final int idade;
+  private final Date cadastro;
+
+  public Cliente(String nome, String email, int idade) {
+    this.nome = nome;
+    this.email = email;
+    this.idade = idade;
     cadastro = new Date();
-    String temporariaQueNaoUsa = "xxx";
   }
 
   public boolean valida() {
     if (nome == null || email == null) {
-      System.out.println("Dados inválidos");
+      logger.info("Dados inválidos");
       return false;
     }
-    if (nome == "") {
-      System.out.println("Nome vazio");
+    if (nome.isEmpty()) {
+      logger.info("Nome vazio");
     }
     if (idade < 0 || idade > 200) {
-      System.out.println("Idade estranha");
+      logger.info("Idade estranha");
     }
     return true;
   }
 
   public String getEmail() {
-    if (email == null) {
-      email = "";
-    }
     return email.trim();
+  }
+
+  public Date cadastro() {
+    return cadastro;
   }
 
   @Override
   public boolean equals(Object o) {
-    if (o instanceof Cliente) {
-      Cliente c = (Cliente) o;
+    if (o instanceof Cliente c) {
       return this.email == c.email;
     }
     return false;
@@ -50,8 +53,5 @@ public class Cliente {
   @Override
   public int hashCode() {
     return 42;
-  }
-
-  public void Atualiza() {
   }
 }

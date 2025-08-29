@@ -3,70 +3,62 @@ package br.edu.ifrs.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Pedido {
-  public List<String> itens = new ArrayList<>();
-  public double valorTotal;
-  private String status = "NOVO";
+  private static Logger logger = LoggerFactory.getLogger(Pedido.class);
+
+  private static final String PROCESSANDO = "PROCESSANDO";
+  private static final String FECHADO = "FECHADO";
+  private static final String NOVO = "NOVO";
+
+  private final List<String> itens = new ArrayList<>();
+  private double valorTotal = 0d;
+  private String status = NOVO;
 
   public void adicionarItem(String nome, double preco) {
-    if (nome == null || nome.length() == 0) {
-      System.out.println("Item sem nome");
+    if (nome == null || nome.isEmpty()) {
+      logger.info("Item sem nome");
     }
     itens.add(nome);
     valorTotal += preco;
     if (valorTotal > 1000) {
-      System.out.println("Pedido grande!");
+      logger.info("Pedido grande!");
     }
   }
 
   public String resumo() {
-    String s = "Pedido: ";
+    StringBuilder builder = new StringBuilder();
+    builder.append("Pedido: ");
     for (int i = 0; i < itens.size(); i++) {
-      s = s + itens.get(i) + ", ";
+      builder.append(itens.get(i)).append(", ");
     }
-    return s;
+    return builder.toString();
   }
 
   public void processar() {
     if ("NOVO".equals(status)) {
-      System.out.println("Processando pedido novo...");
-      status = "PROCESSANDO";
+      logger.info("Processando pedido novo...");
+      status = PROCESSANDO;
     }
-    if ("PROCESSANDO".equals(status)) {
-      System.out.println("Ainda processando...");
-    }
-
-    int tipo = 2;
-    switch (tipo) {
-      case 1:
-        System.out.println("Tipo 1");
-        break;
-      case 2:
-        System.out.println("Tipo 2");
-        break;
+    if (PROCESSANDO.equals(status)) {
+      logger.info("Ainda processando...");
     }
 
-    try {
-      if (valorTotal < 0)
-        throw new IllegalStateException("valor negativo?");
-    } catch (Exception e) {
-    } finally {
-      if (itens.size() == 0) {
-        return;
-      }
-    }
+    logger.info("Tipo 2");
+
+    if (valorTotal < 0)
+      throw new IllegalStateException("valor negativo?");
   }
 
-  public void FecharPedido(boolean notificarCliente) {
-    if (!"PROCESSANDO".equals(status)) {
-      System.out.println("Estado inválido");
+  public void fecharPedido(boolean notificarCliente) {
+    if (!PROCESSANDO.equals(status)) {
+      logger.info("Estado inválido");
     }
-    status = "FECHADO";
+    status = FECHADO;
     if (notificarCliente) {
-      System.out.println("Notificando cliente...");
-    }
-    if (false) {
-      System.out.println("Nunca executa");
+      logger.info("Notificando cliente...");
     }
   }
 }
